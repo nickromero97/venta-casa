@@ -144,6 +144,7 @@ header a {
 .modal img {
   max-width: 90%;
   max-height: 80%;
+  border-radius: 8px;
 }
 
 .modal button {
@@ -152,12 +153,18 @@ header a {
   border: none;
   font-size: 30px;
   cursor: pointer;
-  padding: 10px;
+  padding: 10px 15px;
+  border-radius: 50%;
 }
 
 .modal .prev { left: 20px; top: 50%; }
 .modal .next { right: 20px; top: 50%; }
-.modal .close { top: 20px; right: 20px; }
+.modal .close {
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  z-index: 10000; /* IMPORTANTE */
+}
 </style>
 </head>
 
@@ -221,7 +228,16 @@ header a {
 <div class="modal" id="modal">
   <button class="close" onclick="closeModal()">✖</button>
   <button class="prev" onclick="prevImage()">⬅</button>
-  <img id="modal-img">
+
+  <div style="position: relative;">
+    <img id="modal-img">
+    <div id="image-counter" 
+         style="position:absolute; bottom:10px; right:10px; 
+                background:rgba(0,0,0,0.6); color:white; 
+                padding:5px 10px; border-radius:15px; font-size:14px;">
+    </div>
+  </div>
+
   <button class="next" onclick="nextImage()">➡</button>
 </div>
 
@@ -1492,12 +1508,22 @@ function showCategory(id, btn) {
 
 let currentImages = [];
 let currentIndex = 0;
+let startX = 0;
+let endX = 0;
 
 function openModal(images, index) {
   currentImages = images;
   currentIndex = index;
+
   document.getElementById("modal-img").src = images[index];
   document.getElementById("modal").style.display = "flex";
+
+  updateCounter();
+}
+
+function updateCounter() {
+  const counter = document.getElementById("image-counter");
+  counter.textContent = `${currentIndex + 1}/${currentImages.length}`;
 }
 
 function closeModal() {
@@ -1507,11 +1533,33 @@ function closeModal() {
 function nextImage() {
   currentIndex = (currentIndex + 1) % currentImages.length;
   document.getElementById("modal-img").src = currentImages[currentIndex];
+  updateCounter();
 }
 
 function prevImage() {
   currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
   document.getElementById("modal-img").src = currentImages[currentIndex];
+  updateCounter();
+}
+const modalImg = document.getElementById("modal-img");
+
+modalImg.addEventListener("touchstart", function(e) {
+  startX = e.changedTouches[0].screenX;
+});
+
+modalImg.addEventListener("touchend", function(e) {
+  endX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  if (endX < startX - 50) {
+    nextImage(); // deslizó hacia la izquierda
+  }
+  if (endX > startX + 50) {
+    prevImage(); // deslizó hacia la derecha
+  }
+
 }
 
 for (const cat in productos) {
