@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Venta de cosas del hogar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+header {
+  background: #1ebea5;
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+header a {
+  background: white;
+  color: #1ebea5;
+  padding: 12px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ---------- TABS ---------- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.tabs button {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #ddd;
+  font-weight: bold;
+}
+
+.tabs button.active {
+  background: #1ebea5;
+  color: white;
+}
+
+/* ---------- GRID ---------- */
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .products { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .products { grid-template-columns: 1fr; }
+}
+
+.product {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.product img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.product {
+  position: relative;
+}
+
+.vendido-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: red;
+  color: white;
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.product.vendido img {
+  filter: grayscale(100%);
+  opacity: 0.6;
+}
+
+.price {
+  font-weight: bold;
+}
+
+.product a {
+  margin-top: auto;
+  background: #25d366;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* ---------- CATEGORIES ---------- */
+.category { display: none; }
+.category.active { display: block; }
+
+/* ---------- MODAL ---------- */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal img {
+  max-width: 90%;
+  max-height: 80%;
+}
+
+.modal button {
+  position: absolute;
+  background: rgba(255,255,255,0.7);
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.modal .prev { left: 20px; top: 50%; }
+.modal .next { right: 20px; top: 50%; }
+.modal .close { top: 20px; right: 20px; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>¡Venta de Garage!</h1>
+  <a href="https://wa.me/573107652547">Hablar por WhatsApp</a>
+</header>
+
+<div class="container">
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="active" onclick="showCategory('Bano', this)">Baño</button>
+  <button onclick="showCategory('Cocina', this)">Cocina</button>
+  <button onclick="showCategory('Comedor', this)">Comedor</button>
+  <button onclick="showCategory('Estar_TV', this)">Estar TV</button>
+  <button onclick="showCategory('Habitación', this)">Habitación</button>
+  <button onclick="showCategory('Lavanderia', this)">Lavandería</button>
+  <button onclick="showCategory('Oficina', this)">Oficina</button>
+  <button onclick="showCategory('Sala', this)">Sala</button>
+</div>
+
+<!-- CATEGORIES -->
+<div class="category active" id="Bano">
+  <div class="products" id="productos-Bano"></div>
+</div>
+
+<div class="category" id="Cocina">
+  <div class="products" id="productos-Cocina"></div>
+</div>
+
+<div class="category" id="Comedor">
+  <div class="products" id="productos-Comedor"></div>
+</div>
+
+<div class="category" id="Estar_TV">
+  <div class="products" id="productos-Estar_TV"></div>
+</div>
+
+<div class="category" id="Habitación">
+  <div class="products" id="productos-Habitación"></div>
+</div>
+
+<div class="category" id="Lavanderia">
+  <div class="products" id="productos-Lavanderia"></div>
+</div>
+
+<div class="category" id="Oficina">
+  <div class="products" id="productos-Oficina"></div>
+</div>
+
+<div class="category" id="Sala">
+  <div class="products" id="productos-Sala"></div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <button class="close" onclick="closeModal()">✖</button>
+  <button class="prev" onclick="prevImage()">⬅</button>
+  <img id="modal-img">
+  <button class="next" onclick="nextImage()">➡</button>
+</div>
+
+<script>
+const telefono = "573107652547";
+
+const productos = {
+  Bano: [
+    {
+      nombre: "Juego de dos recipientes de cerámica con tapas inoxidables",
+      precio: "$30.000",
+      descripcion: "Referencia: 349",
+      imagenes: ["img/Bano/349_Juego_dos_recipientes_tapa_inox.JPG"],
+      mensaje: "Hola, me interesa el Juego de dos recipientes de cerámica con tapas inoxidables",
+      vendido: false
+    },
+    {
+      nombre: "Canasta para Toallas de Papel",
+      precio: "$30.000",
+      descripcion: "Referencia:350",
+      imagenes: ["img/Bano/350_Canasta_rectangular_para_toallas_papel.JPG"],
+      mensaje: "Hola, me interesa la canasta para toallas de papel",
+      vendido: false
+    },
+    {
+      nombre: "Bandeja pequeña de cerámica verde",
+      precio: "$15.000",
+      descripcion: "Referencia:354",
+      imagenes: ["img/Bano/354_Bandeja_pequeña_ceramica_verde.JPG"],
+      mensaje: "Hola, me interesa la Bandeja pequeña de cerámica verde",
+      vendido: false
+    },
+    {
+      nombre: "Tres canasta organizadora de yute",
+      precio: "$100.000",
+      descripcion: "Referencia:357",
+      imagenes: ["img/Bano/357_Tres_Canastas_organizadoras_yute.JPG", "img/Bano/357.2_Tres_Canastas_organizadoras_yute.JPG"],
+      mensaje: "Hola, me interesa las Tres canasta organizadora de yute",
+      vendido: false
+    },
+    {
+      nombre: "Organizador plástico mediano de dos niveles",
+      precio: "$30.000",
+      descripcion: "Referencia:361",
+      imagenes: ["img/Bano/361_Organizador_plastico_mediano_dos_niveles.JPG", "img/Bano/361.2_Organizador_plastico_mediano_dos_niveles.JPG"],
+      mensaje: "Hola, me interesa el Organizador plástico mediano de dos niveles",
+      vendido: false
+    },
+    {
+      nombre: "Bandeja cuadrada de cerámica gris",
+      precio: "$20.000",
+      descripcion: "Referencia:363",
+      imagenes: ["img/Bano/363_Bandeja_cuadrada_ceramica_gris.JPG"],
+      mensaje: "Hola, me interesa la Bandeja cuadrada de cerámica gris",
+      vendido: false
+    },
+    {
+      nombre: "Kit de cinco vasos inoxidables",
+      precio: "$75.000",
+      descripcion: "Referencia:364",
+      imagenes: ["img/Bano/364_Kit_cinco_vasos_inox.JPG"],
+      mensaje: "Hola, me interesa el Kit de cinco vasos inoxidables",
+      vendido: false
+    }
+  ],
+  Cocina: [
+    {
+      nombre: "Carrito organizador con tres compartimientos",
+      precio: "$200.000",
+      descripcion: "Referencia: 150",
+      imagenes: ["img/Cocina/150_Carrito_organizador__tres_compartimentos.JPG"],
+      mensaje: "Hola, me interesa el Carrito organizador con tres compartimientos",
+      vendido: false
+    },
+    {
+      nombre: "Dos cuadros Reinaldo Lopez 26X36 36x30",
+      precio: "$240.000",
+      descripcion: "Referencia: 156",
+      imagenes: ["img/Cocina/156_Dos_cuadros_Reinaldo_Lopez_26x36_36x30.JPG"],
+      mensaje: "Hola, me interesa los Dos cuadros Reinaldo Lopez 26X36 36x30",
+      vendido: false
+    },
+    {
+      nombre: "Kit de seis pocillos de madera",
+      precio: "$80.000",
+      descripcion: "Referencia: 158",
+      imagenes: ["img/Cocina/158_Kit_seis_pocillos_madera.JPG"],
+      mensaje: "Hola, me interesa el Kit de seis pocillos de madera",
+      vendido: false
+    },
+    {
+      nombre: "Airfryer Hoffen, pequeño",
+      precio: "$70.000",
+      descripcion: "Referencia: 159",
+      imagenes: ["img/Cocina/159_Airfryer_Hoffen_pequeno.JPG", "img/Cocina/159.2_Airfryer_Hoffen_pequeno.JPG"],
+      mensaje: "Hola, me interesa el Airfryer Hoffen, pequeño",
+      vendido: false
+    },
+    {
+      nombre: "Frutero de madera",
+      precio: "$140.000",
+      descripcion: "Referencia: 160",
+      imagenes: ["img/Cocina/160_Frutero_Madera.JPG"],
+      mensaje: "Hola, me interesa el Frutero de madera",
+      vendido: false
+    },
+    {
+      nombre: "Dos recipientes de plástico transparentes",
+      precio: "$50.000",
+      descripcion: "Referencia: 161",
+      imagenes: ["img/Cocina/161_Recipientes_plastico_transparentes.JPG"],
+      mensaje: "Hola, me interesa los Dos recipientes de plástico transparentes",
+      vendido: false
+    },
+    {
+      nombre: "Tres refractarias ovaladas",
+      precio: "$120.000",
+      descripcion: "Referencia: 162",
+      imagenes: ["img/Cocina/162_Refractarias_ovaladas.JPG"],
+      mensaje: "Hola, me interesa las Tres refractarias ovaladas",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro refractarias rectangulares",
+      precio: "$160.000",
+      descripcion: "Referencia: 163",
+      imagenes: ["img/Cocina/163_Refractarias_rectangulares.JPG"],
+      mensaje: "Hola, me interesa las Cuatro refractarias rectangulares",
+      vendido: false
+    },
+    {
+      nombre: "Refractaria cuadrada",
+      precio: "$40.000",
+      descripcion: "Referencia: 164",
+      imagenes: ["img/Cocina/164_Refractaria_cuadrada.JPG"],
+      mensaje: "Hola, me interesa la Refractaria cuadrada",
+      vendido: false
+    },
+    {
+      nombre: "Dos refractarias redondas con soportes de madera",
+      precio: "$70.000",
+      descripcion: "Referencia: 165",
+      imagenes: ["img/Cocina/165_Dos_refractarias_redondas.JPG"],
+      mensaje: "Hola, me interesa las Dos refractarias redondas con soportes de madera",
+      vendido: false
+    },
+    {
+      nombre: "Vasija para Fondue blanca con fisura",
+      precio: "$100.000",
+      descripcion: "Referencia: 168",
+      imagenes: ["img/Cocina/168_Vasija_fondue_blanca_queso.JPG"],
+      mensaje: "Hola, me interesa la Vasija para Fondue blanca con fisura",
+      vendido: false
+    },
+    {
+      nombre: "Tetera de vidrio con colador",
+      precio: "$40.000",
+      descripcion: "Referencia: 171",
+      imagenes: ["img/Cocina/171_Tetera_vidrio_colador_asa.JPG", "img/Cocina/171.2_Tetera_vidrio_colador_asa.JPG"],
+      mensaje: "Hola, me interesa la Tetera de vidrio colador",
+      vendido: false
+    },
+    {
+      nombre: "Prensa francesa de Té grande",
+      precio: "$70.000",
+      descripcion: "Referencia: 174",
+      imagenes: ["img/Cocina/174_Prensa_francesa_grande_te_vidrio.JPG"],
+      mensaje: "Hola, me interesa la Prensa francesa de Té grande",
+      vendido: false
+    },
+    {
+      nombre: "Juego de madera de tres salseras",
+      precio: "$150.000",
+      descripcion: "Referencia: 176",
+      imagenes: ["img/Cocina/176_Juego_madera_tres_salseras.JPG"],
+      mensaje: "Hola, me interesa el Juego de madera de tres salseras",
+      vendido: false
+    },
+    {
+      nombre: "Juego de dos bowls de vidrio",
+      precio: "$140.000",
+      descripcion: "Referencia: 178",
+      imagenes: ["img/Cocina/178_Juego_2_Bowls_Vidrio.JPG"],
+      mensaje: "Hola, me interesa el Juego de dos bowls de vidrio",
+      vendido: false
+    },
+    {
+      nombre: "Juego de cuatro salseras de porcelana",
+      precio: "$40.000",
+      descripcion: "Referencia: 180",
+      imagenes: ["img/Cocina/180_Juego_4_salseras_de_porcelana.JPG"],
+      mensaje: "Hola, me interesa el Juego de cuatro salseras de porcelana",
+      vendido: false
+    },
+    {
+      nombre: "Juego de dos bandekas de porcelana amarillas",
+      precio: "$30.000",
+      descripcion: "Referencia: 181",
+      imagenes: ["img/Cocina/181_Juego_2_bandejas_de_porcelana_amarillas.JPG"],
+      mensaje: "Hola, me interesa el Juego de dos bandekas de porcelana amarillas",
+      vendido: false
+    },
+    {
+      nombre: "Taza medidora de vidrio Pyrex de 500ml",
+      precio: "$90.000",
+      descripcion: "Referencia: 182",
+      imagenes: ["img/Cocina/182_Taza_medidora_vidrio_Pyrex_500ml.JPG"],
+      mensaje: "Hola, me interesa la Taza medidora de vidrio Pyrex",
+      vendido: false
+    },
+    {
+      nombre: "Taza medidora de vidrio Marinex de 250ml",
+      precio: "$40.000",
+      descripcion: "Referencia: 183",
+      imagenes: ["img/Cocina/183_Taza_medidora_vidrio_Marinex_250ml.JPG"],
+      mensaje: "Hola, me interesa la Taza medidora de vidrio Marinex de 250ml",
+      vendido: false
+    },
+    {
+      nombre: "Juego de dos salseras RAE DUNN",
+      precio: "$70.000",
+      descripcion: "Referencia: 189",
+      imagenes: ["img/Cocina/189_Juego_salseras_RAE_DUNN.JPG"],
+      mensaje: "Hola, me interesa el Juego de dos salseras RAE DUNN",
+      vendido: false
+    },
+    {
+      nombre: "Microondas Whirpool 20 ltrs, Modelo: WM2014S",
+      precio: "$300.000",
+      descripcion: "Referencia: 196",
+      imagenes: ["img/Cocina/196_Microondas_Whirlpool_20_ltrs.JPG"],
+      mensaje: "Hola, me interesa el Microondas Whirpool 20 ltrs, Modelo: WM2014S",
+      vendido: false
+    },
+    {
+      nombre: "Dos tazas de cerámica con vertsículos bíblicos",
+      precio: "$60.000",
+      descripcion: "Referencia: 197",
+      imagenes: ["img/Cocina/197_Tazas_ceramica_blanca_versículos.JPG"],
+      mensaje: "Hola, me interesa las Dos tazas de cerámica con vertsículos bíblicos",
+      vendido: false
+    },
+    {
+      nombre: "Salsera de plastico",
+      precio: "$40.000",
+      descripcion: "Referencia: 190",
+      imagenes: ["img/Cocina/190_Salsera_plastico_redonda_hojas.JPG"],
+      mensaje: "Hola, me interesa la Salsera de plastico",
+      vendido: false
+    },
+    {
+      nombre: "Juego de cuatro recipientes para granos de cerámica",
+      precio: "$180.000",
+      descripcion: "Referencia: 199",
+      imagenes: ["img/Cocina/199_Juego_4_recipientes_granos_cerámica.JPG"],
+      mensaje: "Hola, me interesa el Juego de cuatro recipientes para granos de cerámica",
+      vendido: false
+    },
+    {
+      nombre: "Juego de cuatro recipientes para granos en aluminio",
+      precio: "$90.000",
+      descripcion: "Referencia: 200",
+      imagenes: ["img/Cocina/200_Juego_4_recipientes_granos_acero.JPG"],
+      mensaje: "Hola, me interesa el Juego de cuatro recipientes para granos en aluminio",
+      vendido: false
+    },
+    {
+      nombre: "Azucarera redonda de aluminio",
+      precio: "$30.000",
+      descripcion: "Referencia: 201",
+      imagenes: ["img/Cocina/201_Azucarera_redonda_aluminio.JPG"],
+      mensaje: "Hola, me interesa la Azucarera redonda de aluminio",
+      vendido: false
+    },
+    {
+      nombre: "Dispensador de jabón para loza",
+      precio: "$20.000",
+      descripcion: "Referencia: 202",
+      imagenes: ["img/Cocina/202_Dispensador_Jabon_Loza.JPG", "img/Cocina/201_Azucarera_redonda_aluminio(1).JPG"],
+      mensaje: "Hola, me interesa el Dispensador de jabón para loza",
+      vendido: false
+    },
+    {
+      nombre: "Botilito de aceite español",
+      precio: "$60.000",
+      descripcion: "Referencia: 204",
+      imagenes: ["img/Cocina/204_botilito_aceite_espanol.JPG"],
+      mensaje: "Hola, me interesa el Botilito de aceite español",
+      vendido: false
+    },
+    {
+      nombre: "Escurridor de metal con bandeja plástica",
+      precio: "$40.000",
+      descripcion: "Referencia: 206",
+      imagenes: ["img/Cocina/206_Escurridor_metal_bandeja.JPG"],
+      mensaje: "Hola, me interesa el Escurridor de metal con bandeja plástica",
+      vendido: false
+    },
+    {
+      nombre: "Dos escurridores cilíndricos de acero inoxidable pequeño",
+      precio: "$120.000",
+      descripcion: "Referencia: 207",
+      imagenes: ["img/Cocina/207_Dos_escurridores_cilindricos_inox_pequeños.JPG"],
+      mensaje: "Hola, me interesa los Dos escurridores cilindricos de ácero inoxidable pequeño",
+      vendido: false
+    },
+    {
+      nombre: "Escurridor cilíndrico de acero inoxidable grande",
+      precio: "$70.000",
+      descripcion: "Referencia: 208",
+      imagenes: ["img/Cocina/208_Escurridor_cilindrico_inox_grande.JPG"],
+      mensaje: "Hola, me interesa el Escurridor cilíndrico de acero inoxidable grande",
+      vendido: false
+    },
+    {
+      nombre: "Cafetera Black&Decker con cinco tazas (NUEVA)",
+      precio: "$120.000",
+      descripcion: "Referencia: 209",
+      imagenes: ["img/Cocina/209_Cafetera_Black&Decker_cinco_tazas.JPG"],
+      mensaje: "Hola, me interesa la Cafetera Black&Decker con cinco tazas",
+      vendido: false
+    },
+    {
+      nombre: "Tabla de madera pequeña",
+      precio: "$50.000",
+      descripcion: "Referencia: 212",
+      imagenes: ["img/Cocina/212_Tabla_madera_rectangular.JPG"],
+      mensaje: "Hola, me interesa la Tabla de madera pequeña",
+      vendido: false
+    },
+    {
+      nombre: "Kit de cucharas ganso para ensalada",
+      precio: "$30.000",
+      descripcion: "Referencia: 220",
+      imagenes: ["img/Cocina/220_Kit_cucharas_ganso.JPG"],
+      mensaje: "Hola, me interesa el Kit de cucharas ganso para ensalada",
+      vendido: false
+    },
+    {
+      nombre: "Pala de silicona",
+      precio: "$50.000",
+      descripcion: "Referencia: 225",
+      imagenes: ["img/Cocina/225_Pala_silicona_inox.JPG"],
+      mensaje: "Hola, me interesa la Pala de silicona",
+      vendido: false
+    },
+    {
+      nombre: "Dos pinzas de plástico negras",
+      precio: "$20.000",
+      descripcion: "Referencia: 226",
+      imagenes: ["img/Cocina/226_Dos_pinzas_plastico_negras.JPG"],
+      mensaje: "Hola, me interesa las Dos pinzas de plástico negras",
+      vendido: false
+    },
+    {
+      nombre: "Tijera WUSTOR",
+      precio: "$50.000",
+      descripcion: "Referencia: 231",
+      imagenes: ["img/Cocina/231_Tijeras_Wustor_finas.JPG"],
+      mensaje: "Hola, me interesa las Tijera WUSTOR finas",
+      vendido: false
+    },
+    {
+      nombre: "Soporte para cuchara de acero inoxidable",
+      precio: "$20.000",
+      descripcion: "Referencia: 232",
+      imagenes: ["img/Cocina/232_Soporte_cuchara_inox.JPG"],
+      mensaje: "Hola, me interesa el Soporte para cuchara de acero inoxidable",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro canastas organizadoras grandes",
+      precio: "$200.000",
+      descripcion: "Referencia: 234",
+      imagenes: ["img/Cocina/234_Cuatro_ canastas_organizadoras_grandes_cafe.JPG", "img/Cocina/234.2_Cuatro_ canastas_organizadoras_grandes_cafe.JPG"],
+      mensaje: "Hola, me interesa las Cuatro canastas organizadoras grandes",
+      vendido: false
+    },
+    {
+      nombre: "Picatodo Black&Decker",
+      precio: "$60.000",
+      descripcion: "Referencia: 237",
+      imagenes: ["img/Cocina/237_Picatodo_BlackDecker.JPG"],
+      mensaje: "Hola, me interesa el Picatodo Black&Decker",
+      vendido: false
+    },
+    {
+      nombre: "Tetera eléctrica UNIVERSAL",
+      precio: "$90.000",
+      descripcion: "Referencia: 238",
+      imagenes: ["img/Cocina/238_Tetera_Electrica_Universal.JPG"],
+      mensaje: "Hola, me interesa la Tetera eléctrica UNIVERSAL",
+      vendido: false
+    },
+    {
+      nombre: "Kit para parrilla",
+      precio: "$140.000",
+      descripcion: "Referencia: 244",
+      imagenes: ["img/Cocina/244_Kit_parrilla.JPG", "img/Cocina/244.2_Kit_parrilla.JPG"],
+      mensaje: "Hola, me interesa el Kit para parrilla",
+      vendido: false
+    },
+    {
+      nombre: "Tostiarepa OSTER, Modelo: 4895-814",
+      precio: "$130.000",
+      descripcion: "Referencia: 246",
+      imagenes: ["img/Cocina/246_Tostiarepa_Oster_4895-814.JPG", "img/Cocina/246_Tostiarepa_Oster_4895-814(1).JPG"],
+      mensaje: "Hola, me interesa la Tostiarepa OSTER, Modelo: 4895-814",
+      vendido: false
+    },
+    {
+      nombre: "Sandwchera CUISINART GRIDLER, Modelo: GR1",
+      precio: "$150.000",
+      descripcion: "Referencia: 247",
+      imagenes: ["img/Cocina/247_Sandwchera_Cuisinart_Gridler.JPG", 'img/Cocina/247.2_Sandwchera_Cuisinart_Gridler.JPG'],
+      mensaje: "Hola, me interesa la Sandwchera CUISINART GRIDLER, Modelo: GR1",
+      vendido: false
+    },
+    {
+      nombre: "Sandwchera KALLEY dos puestos, Modelo: K-SMP200N",
+      precio: "$30.000",
+      descripcion: "Referencia: 248",
+      imagenes: ["img/Cocina/248_Sandwchera_Kalley_dos_puestos.JPG", "img/Cocina/248.2_Sandwchera_Kalley_dos_puestos.JPG"],
+      mensaje: "Hola, me interesa la Sandwchera KALLEY dos puestos, Modelo: K-SMP200N",
+      vendido: false
+    },
+    {
+      nombre: "Rodillo",
+      precio: "$30.000",
+      descripcion: "Referencia: 250",
+      imagenes: ["img/Cocina/250_Rodillo.JPG"],
+      mensaje: "Hola, me interesa el Rodillo",
+      vendido: false
+    },
+    {
+      nombre: "Bandeja rectangular de madera con asas de PEWTER",
+      precio: "$30.000",
+      descripcion: "Referencia: 251",
+      imagenes: ["img/Cocina/251_Bandeja_rectangular_asas_pewter.JPG"],
+      mensaje: "Hola, me interesa la Bandeja rectangular de madera con asas de PEWTER",
+      vendido: false
+    },
+    {
+      nombre: "Juego de ocho tapas silicona rosadas",
+      precio: "$60.000",
+      descripcion: "Referencia: 252",
+      imagenes: ["img/Cocina/252_Juego_tapas_silicona_rosadas.JPG"],
+      mensaje: "Hola, me interesa el Juego de ocho tapas silicona rosadas",
+      vendido: false
+    },
+    {
+      nombre: "Siete pinchos para mazorcas y clips para bolsas, 3 clips grandes y 14 pequeños. Todo en caja de madera",
+      precio: "$30.000",
+      descripcion: "Referencia: 257",
+      imagenes: ["img/Cocina/257_Siete_pinchos_mazorca_y_clips_bolsas.JPG"],
+      mensaje: "Hola, me interesa los Siete pinchos para mazorcas y clips para bolsas, 3 clips grandes y 14 pequeños. Todo en caja de madera",
+      vendido: false
+    },
+    {
+      nombre: "Colador-escurridor grande de silicona, color rosa",
+      precio: "$30.000",
+      descripcion: "Referencia: 259",
+      imagenes: ["img/Cocina/259_Colador-escurridor_rosa_silicona.JPG", "img/Cocina/259.2_Colador-escurridor_rosa_silicona.JPG"],
+      mensaje: "Hola, me interesa el Colador-escurridor grande de silicona",
+      vendido: false
+    },
+    {
+      nombre: "Colador-escurridor grande de silicona, color blanco - verde",
+      precio: "$20.000",
+      descripcion: "Referencia: 262",
+      imagenes: ["img/Cocina/262_Colador-escurridor_silicona_blanco_con_verde.JPG"],
+      mensaje: "Hola, me interesa las Siete tablas de madera redondas",
+      vendido: false
+    },
+    {
+      nombre: "Cortador descorazonador de plástico",
+      precio: "$20.000",
+      descripcion: "Referencia: 263",
+      imagenes: ["img/Cocina/263_Cortador_descorazonador.JPG"],
+      mensaje: "Hola, me interesa el Cortador descorazonador de plástico",
+      vendido: false
+    },
+    {
+      nombre: "Guante agarrador de silicona",
+      precio: "$30.000",
+      descripcion: "Referencia: 268",
+      imagenes: ["img/Cocina/268_Guante_agarrador_silicona.JPG"],
+      mensaje: "Hola, me interesa el Guante agarrador de silicona",
+      vendido: false
+    },
+    {
+      nombre: "Cubiertera de plástico",
+      precio: "$20.000",
+      descripcion: "Referencia: 269",
+      imagenes: ["img/Cocina/269_Cubiertera_plastico_gris.JPG"],
+      mensaje: "Hola, me interesa la Cubiertera de plástico",
+      vendido: false
+    },
+    {
+      nombre: "Kit pela papa, destapador y otros",
+      precio: "$50.000",
+      descripcion: "Referencia: 273",
+      imagenes: ["img/Cocina/273_Kit_Pela_papa,_destapador_y_otros.JPG"],
+      mensaje: "Hola, me interesa el Kit pela papa, destapador y otros",
+      vendido: false
+    },
+    {
+      nombre: "Abrelatas de acero inoxidable KITCHENAID",
+      precio: "$100.000",
+      descripcion: "Referencia: 279",
+      imagenes: ["img/Cocina/279_Abrelatas_blanco_acero.JPG", "img/Cocina/279_Abrelatas_blanco_acero(1).JPG"],
+      mensaje: "Hola, me interesa el Abrelatas de acero inoxidable KITCHENAID",
+      vendido: false
+    },
+    {
+      nombre: "Cuchillo rojo para cortar carne",
+      precio: "$30.000",
+      descripcion: "Referencia: 286",
+      imagenes: ["img/Cocina/286_Cuchillo_rojo_cortar_carne.JPG"],
+      mensaje: "Hola, me interesa el Cuchillo rojo para cortar carne",
+      vendido: false
+    },
+    {
+      nombre: "Dos Botilitos con pitillos de silicona",
+      precio: "$40.000",
+      descripcion: "Referencia: 290",
+      imagenes: ["img/Cocina/290_Botilitos_liquidos_rosado_y_blanco.JPG"],
+      mensaje: "Hola, me interesa los Dos Botilitos para liquidos con pitillos de silicona",
+      vendido: false
+    },
+    {
+      nombre: "Dos recipientes de alimentos para cereal",
+      precio: "$80.000",
+      descripcion: "Referencia: 307",
+      imagenes: ["img/Cocina/307_Recipientes_alimentos_para_cereal.JPG"],
+      mensaje: "Hola, me interesa los Dos recipientes de alimentos para cereal",
+      vendido: false
+    },
+    {
+      nombre: "28 Tupperwares",
+      precio: "$150.000",
+      descripcion: "Referencia: 319",
+      imagenes: ["img/Cocina/319_28_Tupperwares.JPG"],
+      mensaje: "Hola, me interesa los 28 Tupperwares",
+      vendido: false
+    },
+    {
+      nombre: "Escurridor de plástico azul con patas",
+      precio: "$20.000",
+      descripcion: "Referencia: 330",
+      imagenes: ["img/Cocina/330_Escurridor_plastico_azul_con_patas.JPG"],
+      mensaje: "Hola, me interesa el Escurridor de plástico azul con patas",
+      vendido: false
+    },
+    {
+      nombre: "Kit de siete ollas de acero inoxidable con cuatro tapas CUISINART",
+      precio: "$800.000",
+      descripcion: "Referencia: 334",
+      imagenes: ["img/Cocina/334.2_Kit_7_Ollas_finas_Cuisinart_con_ tapas.JPG"],
+      mensaje: "Hola, me interesa el Kit de siete ollas de acero inoxidable con cuatro tapas CUISINART",
+      vendido: false
+    },
+    {
+      nombre: "Olla caldero grande para arroz IMUSA",
+      precio: "$40.000",
+      descripcion: "Referencia: 335",
+      imagenes: ["img/Cocina/335_Olla_caldero_grande_arroz_Imusa.JPG"],
+      mensaje: "Hola, me interesa la Olla caldero grande para arroz IMUSA",
+      vendido: false
+    },
+    {
+      nombre: "Olla caldero mediana para arroz IMUSA",
+      precio: "$30.000",
+      descripcion: "Referencia: 336",
+      imagenes: ["img/Cocina/336_Olla_caldero_mediana_arroz_Imusa.JPG"],
+      mensaje: "Hola, me interesa la Olla caldero mediana para arroz IMUSA",
+      vendido: false
+    },
+    {
+      nombre: "Organizafor de tapas de aluminio inoxidable",
+      precio: "$40.000",
+      descripcion: "Referencia: 337",
+      imagenes: ["img/Cocina/337_Organizador_tapas_aluminio_inox.JPG", "img/Cocina/337.1_Organizador_tapas_aluminio_inox.JPG"],
+      mensaje: "Hola, me interesa el Organizafor de tapas de aluminio inoxidable",
+      vendido: false
+    },
+    {
+      nombre: "Olla a presión UNIVERSAL",
+      precio: "$100.000",
+      descripcion: "Referencia: 342",
+      imagenes: ["img/Cocina/342_Olla_presion_Universal.JPG"],
+      mensaje: "Hola, me interesa la Olla a presión UNIVERSAL",
+      vendido: false
+    },
+    {
+      nombre: "Olleta chocolatera",
+      precio: "$30.000",
+      descripcion: "Referencia: 343",
+      imagenes: ["img/Cocina/343_Olleta_chocolatera.JPG"],
+      mensaje: "Hola, me interesa la Olleta chocolatera",
+      vendido: false
+    },
+  ],
+  Comedor: [
+    {
+      nombre: "Biffe Ceibo rustico con tres cajones y dos puertas, mediadas: ancho 140cm, profundidad 48cm, alto 92cm",
+      precio: "$1.800.000",
+      descripcion: "Referencia: 066",
+      imagenes: ["img/Comedor/066_Biffe_Ceibo_rustico_3_cajones_dos_puertas.JPG", "img/Comedor/066.2_Biffe_Ceibo_rustico_3_cajones_dos_puertas.JPG",
+        "img/Comedor/066.3_Biffe_Ceibo_rustico_3_cajones_dos_puertas.JPG"
+      ],
+      mensaje: "Hola, me interesa el Biffe Ceibo rustico con tres cajones y dos puertas, mediadas: ancho 140cm, profundidad 48cm, alto 92cm",
+      vendido: false
+    },
+    {
+      nombre: "Jarrón de barro con soporte de hierro",
+      precio: "$170.000",
+      descripcion: "Referencia: 068",
+      imagenes: ["img/Comedor/068_Jarron_barro_soporte_hierro.JPG"],
+      mensaje: "Hola, me interesa el Jarron de barro con soporte de hierro",
+      vendido: false
+    },
+    {
+      nombre: "Alfombra de yute, medidas:130cm x 130cm",
+      precio: "$100.000",
+      descripcion: "Referencia: 070",
+      imagenes: ["img/Comedor/070_Alfombra_yute_130_x_130.JPG"],
+      mensaje: "Hola, me interesa la Alfombra de yute, medidas:130cm x 130cm",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro palomas de madera",
+      precio: "$80.000",
+      descripcion: "Referencia: 073",
+      imagenes: ["img/Comedor/073_Cuatro_Palomas_madera.JPG"],
+      mensaje: "Hola, me interesa las Cuatro palomas de madera",
+      vendido: false
+    },
+    {
+      nombre: "Siete vasos mexicanos borrachos de vidrio",
+      precio: "$140.000",
+      descripcion: "Referencia: 074",
+      imagenes: ["img/Comedor/074_Siete_Vasos_Mexicanos_borrachos.JPG"],
+      mensaje: "Hola, me interesa los Siete vasos mexicanos borrachos de vidrio",
+      vendido: false
+    },
+    {
+      nombre: "Doce copas de champaña",
+      precio: "$100.000",
+      descripcion: "Referencia: 075",
+      imagenes: ["img/Comedor/075_Doce_Copas_Champana.JPG"],
+      mensaje: "Hola, me interesa las Doce copas de champaña",
+      vendido: false
+    },
+    {
+      nombre: "Diez copas de vino",
+      precio: "$80.000",
+      descripcion: "Referencia: 076",
+      imagenes: ["img/Comedor/076_Diez_Copas_Vino.JPG"],
+      mensaje: "Hola, me interesa las Diez copas de vino",
+      vendido: false
+    },
+    {
+      nombre: "Vajilla de barro bambu, 6 platos para tazas, 9 tazas, 1 azucarera, 1 tetera",
+      precio: "$140.000",
+      descripcion: "Referencia: 077",
+      imagenes: ["img/Comedor/077_Vajilla_Barro_Bambu_6.JPG"],
+      mensaje: "Hola, me interesa la Vajilla de barro bambu, 6 platos para tazas, 9 tazas, 1 azucarera, 1 tetera",
+      vendido: false
+    },
+    {
+      nombre: "Jarrón de vidrio",
+      precio: "$120.000",
+      descripcion: "Referencia: 078",
+      imagenes: ["img/Comedor/078_Jarron_fino_vidrio_largo.JPG"],
+      mensaje: "Hola, me interesa el Jarrón de vidrio",
+      vendido: false
+    },
+    {
+      nombre: "Camino de flores para mesa de comedor",
+      precio: "$60.000",
+      descripcion: "Referencia: 081",
+      imagenes: ["img/Comedor/081_Camino_flores_Casa_Ideas.JPG", "img/Comedor/081.2_Camino_flores_Casa_Ideas.JPG"],
+      mensaje: "Hola, me interesa el Camino de flores para mesa de comedor",
+      vendido: false
+    },
+    {
+      nombre: "Ramo de hortensias artificiales",
+      precio: "$30.000",
+      descripcion: "Referencia: 085",
+      imagenes: ["img/Comedor/085_Ramo_de_Ortencias_artificiales.JPG"],
+      mensaje: "Hola, me interesa el Ramo de hortensias artificiales",
+      vendido: false
+    },
+    {
+      nombre: "Tres pinzas de acero inoxidable para hielo",
+      precio: "$30.000",
+      descripcion: "Referencia: 090",
+      imagenes: ["img/Comedor/090_Pinzas_acero_inoxidable_para_hielo.JPG"],
+      mensaje: "Hola, me interesa las tres pinzas de acero inoxidable para hielo",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro individuales de foamy",
+      precio: "$30.000",
+      descripcion: "Referencia: 095",
+      imagenes: ["img/Comedor/095_Cuatro_Individuales_foamy.JPG"],
+      mensaje: "Hola, me interesa los Cuatro individuales de foamy",
+      vendido: false
+    },
+    {
+      nombre: "Vajilla artesanal de Boyacá",
+      precio: "$1.600.000",
+      descripcion: "Referencia: 098",
+      imagenes: ["img/Comedor/098_Vajilla_artesanal_Boyaca.JPG", "img/Comedor/098.2_Vajilla_artesanal_Boyaca.JPG",
+        "img/Comedor/098.3_Vajilla_artesanal_Boyaca.JPG"
+      ],
+      mensaje: "Hola, me interesa la Vajilla artesanal de Boyacá",
+      vendido: false
+    },
+    {
+      nombre: "Juego de tres botellas con soporte de madera",
+      precio: "$30.000",
+      descripcion: "Referencia: 198",
+      imagenes: ["img/Comedor/198_Juego_tres_botellitas_soporte.JPG"],
+      mensaje: "Hola, me interesa el Juego de tres botellas con soporte de madera",
+      vendido: false
+    },
+    {
+      nombre: "Kit de 20 cubiertos para 6 puestos",
+      precio: "$30.000",
+      descripcion: "Referencia: 293",
+      imagenes: ["img/Comedor/293_Kit_cubiertos_seis_puestos.JPG"],
+      mensaje: "Hola, me interesa el Kit de 20 cubiertos para 6 puestos",
+      vendido: false
+    },
+    {
+      nombre: "Kit de 25 cubiertos de metal para mesa con diseño de bambú",
+      precio: "$80.000",
+      descripcion: "Referencia: 296",
+      imagenes: ["img/Comedor/296_Kit_cubiertos_mesa_bambu.JPG"],
+      mensaje: "Hola, me interesa el Kit de 25 cubiertos de metal para mesa con diseño de bambú",
+      vendido: false
+    },
+    {
+      nombre: "Kit de 7 cucharitas de café y 11 tenedores para torta",
+      precio: "$30.000",
+      descripcion: "Referencia: 303",
+      imagenes: ["img/Comedor/303_Kit_7_cucharitas_cafe_11_tenedores_torta.JPG"],
+      mensaje: "Hola, me interesa el Kit de 7 cucharitas de café y 11 tenedores para torta",
+      vendido: false
+    },
+    {
+      nombre: "Frutero en aluminio",
+      precio: "$40.000",
+      descripcion: "Referencia: 309",
+      imagenes: ["img/Comedor/309_Frutero_aluminio_inox.JPG", "img/Comedor/309.2_Frutero_aluminio_inox.JPG"],
+      mensaje: "Hola, me interesa el Frutero en aluminio",
+      vendido: false
+    },
+    {
+      nombre: "Panera en aluminio",
+      precio: "$30.000",
+      descripcion: "Referencia: 312",
+      imagenes: ["img/Comedor/312_Panera_inox.JPG", "img/Comedor/312.2_Panera_inox.JPG"],
+      mensaje: "Hola, me interesa la Panera en aluminio",
+      vendido: false
+    },
+    {
+      nombre: "Servilletero en aluminio",
+      precio: "$60.000",
+      descripcion: "Referencia: 313",
+      imagenes: ["img/Comedor/313_Servilletero_inox.JPG"],
+      mensaje: "Hola, me interesa el Servilletero en aluminio",
+      vendido: false
+    },
+    {
+      nombre: "Dos Jarras de vidrio con tapa",
+      precio: "$50.000",
+      descripcion: "Referencia: 315",
+      imagenes: ["img/Comedor/315_Dos_Jarras_vidrio_con_tapa.JPG"],
+      mensaje: "Hola, me interesa las Dos Jarras de vidrio con tapa",
+      vendido: false
+    },
+    {
+      nombre: "Jarra de vidrio sin tapa",
+      precio: "$30.000",
+      descripcion: "Referencia: 316",
+      imagenes: ["img/Comedor/316_Jarra_vidrio_sin_tapa.JPG"],
+      mensaje: "Hola, me interesa la Jarra de vidrio sin tapa",
+      vendido: false
+    },
+  ],
+  Estar_TV: [
+    {
+      nombre: "Amplificador LANEY acustico, Modelo: LA12C",
+      precio: "$180.000",
+      descripcion: "Referencia: 026",
+      imagenes: ["img/Estar TV/026_Amplificador_Laney_LA12C.JPG"],
+      mensaje: "Hola, me interesa el Amplificador LANEY acustico, Modelo: LA12C",
+      vendido: false
+    },
+    {
+      nombre: "Guitarra acustica YAMAHA, modelo:C-40, con estuche duro",
+      precio: "$500.000",
+      descripcion: "Referencia: 027",
+      imagenes: ["img/Estar TV/027_Guitarra_Acustica_Yamaha_C-40.JPG", "img/Estar TV/027.2_Guitarra_Acustica_Yamaha_C-40.JPG",
+        "img/Estar TV/027.3_Guitarra_Acustica_Yamaha_C-40.JPG", 
+      ],
+      mensaje: "Hola, me interesa la Guitarra acustica YAMAHA, modelo:C-40, con estuche duro",
+      vendido: false
+    },
+    {
+      nombre: "Guitarra Silent YAMAHA, Modelo SLG-100N con soporte y forro",
+      precio: "$1.200.000",
+      descripcion: "Referencia: 028",
+      imagenes: ["img/Estar TV/028_Guitarra_Silent_Yamaha_SLG-100N.JPG", "img/Estar TV/028.2_Guitarra_Silent_Yamaha_SLG-100N.JPG",
+        "img/Estar TV/028.3_Guitarra_Silent_Yamaha_SLG-100N.JPG"
+      ],
+      mensaje: "Hola, me interesa la Guitarra Silent YAMAHA, Modelo SLG-100N con soporte y forro",
+      vendido: false
+    },
+    {
+      nombre: "Mesa de madera para TV, medidas: ancho 130cm, profundidad:40cm, alto:52cm",
+      precio: "$300.000",
+      descripcion: "Referencia: 050",
+      imagenes: ["img/Estar TV/050_Mesa_madera_TV_Ancho_130_x_40_x_52.JPG", "img/Estar TV/050.2_Mesa_madera_TV_Ancho_130_x_40_x_52.JPG"],
+      mensaje: "Hola, me interesa la Mesa de madera para TV, medidas: ancho 130cm, profundidad:40cm, alto:52cm",
+      vendido: false
+    },
+    {
+      nombre: "Aspiradora para carro HOTOR",
+      precio: "$80.000",
+      descripcion: "Referencia: 053",
+      imagenes: ["img/Estar TV/053_Aspiradora_carro_HOTOR.JPG", "img/Estar TV/053.2_Aspiradora_carro_HOTOR.JPG",
+        "img/Estar TV/053.3_Aspiradora_carro_HOTOR.JPG"
+      ],
+      mensaje: "Hola, me interesa la Aspiradora para carro HOTOR",
+      vendido: false
+    },
+    {
+      nombre: "Dos Jarrones Griegos",
+      precio: "$180.000",
+      descripcion: "Referencia: 055",
+      imagenes: ["img/Estar TV/055_Jarrones_griegos.JPG"],
+      mensaje: "Hola, me interesa los Dos Jarrones Griegos",
+      vendido: false
+    },
+    {
+      nombre: "Florero, rojo-café",
+      precio: "$80.000",
+      descripcion: "Referencia: 057",
+      imagenes: ["img/Estar TV/057_Florero_rojo_cafe.JPG"],
+      mensaje: "Hola, me interesa el Florero, rojo-café",
+      vendido: false
+    },
+    {
+      nombre: "Dos tucanes en murano",
+      precio: "$80.000",
+      descripcion: "Referencia: 058",
+      imagenes: ["img/Estar TV/058_Dos_tucanes_en_murano.JPG"],
+      mensaje: "Hola, me interesa los Dos tucanes en murano",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro repisas en pino con soportes de aluminio, medidas 100cm x 25cm",
+      precio: "$480.000",
+      descripcion: "Referencia: 060",
+      imagenes: ["img/Estar TV/060_Cuatro_Repisas_Pino_100cm_x_25_cm.JPG"],
+      mensaje: "Hola, me interesa las Cuatro repisas en pino con soportes de aluminio, medidas 100cm x 25cm",
+      vendido: false
+    },
+    {
+      nombre: "Tres velones",
+      precio: "$50.000",
+      descripcion: "Referencia: 062",
+      imagenes: ["img/Estar TV/062_Tres_Velones.JPG"],
+      mensaje: "Hola, me interesa los Tres velones",
+      vendido: false
+    },
+    {
+      nombre: "Jarrón blanco-negro etrusco",
+      precio: "$60.000",
+      descripcion: "Referencia: 064",
+      imagenes: ["img/Estar TV/064_Jarron_blanco_negro_etrusco.JPG"],
+      mensaje: "Hola, me interesa el Jarrón blanco-negro etrusco",
+      vendido: false
+    },
+    {
+      nombre: "Jarrón de barro naranja trompo",
+      precio: "$200.000",
+      descripcion: "Referencia: 0132",
+      imagenes: ["img/Estar TV/132_Jarron_barro_naranja_trompo.JPG"],
+      mensaje: "Hola, me interesa el Jarrón de barro naranja trompo",
+      vendido: false
+    },
+  ],
+  Habitación: [
+    {
+      nombre: "Cama matrimonial con colchon, medidas 160cm x 190cm",
+      precio: "$1.000.000",
+      descripcion: 'Referencia: 002',
+      imagenes: ["img/Habitación/002_Cama_Matrimonial_1,60x1,90_mts.JPG"],
+      mensaje: "Hola, me interesa la Cama matrimonial con colchon, medidas 160cm x 190cm",
+      vendido: false
+    },
+    {
+      nombre: "Dos cuadros de cara",
+      precio: "$110.000",
+      descripcion: 'Referencia:005',
+      imagenes: ["img/Habitación/005_Cuadros_Caras.JPG"],
+      mensaje: "Hola, me interesa los Dos cuadros de cara",
+      vendido: false
+    },
+    {
+      nombre: "Colchon inflable individual KLIMBER",
+      precio: "$100.000",
+      descripcion: 'Referencia:012',
+      imagenes: ["img/Habitación/012_Colchon_Inflable_Klimber.png"],
+      mensaje: "Hola, me interesa el Colchon inflable individual KLIMBER",
+      vendido: false
+    },
+    {
+      nombre: "Lampara para lectura con 6 intensidades de luz y 3 colores, GLOCUSENT",
+      precio: "$100.000",
+      descripcion: 'Referencia:373',
+      imagenes: ["img/Habitación/373_Lampara_Glocusent_lectura.JPG", "img/Habitación/373.2_Lampara_Glocusent_lectura.JPG"],
+      mensaje: "Hola, me interesa la Lampara para lectura con 6 intensidades de luz y 3 colores, GLOCUSENT",
+      vendido: false
+    }
+  ],
+  Lavanderia: [
+    {
+      nombre: "Tendedero de ropas",
+      precio: "$80.000",
+      descripcion: 'Referencia: 137',
+      imagenes: ["img/Lavanderia/137_Tendedero_ropas.JPG", "img/Lavanderia/137.2_Tendedero_ropas.JPG",
+        "img/Lavanderia/137.3_Tendedero_ropas.JPG", "img/Lavanderia/137.4_Tendedero_ropas.JPG"
+      ],
+      mensaje: "Hola, me interesa el Tendedero de ropas",
+      vendido: false
+    },
+    {
+      nombre: "Lavadora y secadora DUET Whirpool 12KG",
+      precio: "$3.400.000",
+      descripcion: 'Referencia:141',
+      imagenes: ["img/Lavanderia/141_Lavadora_Secadora_Whirpool_Duet_12.png", "img/Lavanderia/141.2_Lavadora_Secadora_Whirpool_Duet_12.png"],
+      mensaje: "Hola, me interesa la Lavadora y secadora DUET Whirpool 12KG",
+      vendido: false
+    },
+    {
+      nombre: "Plancha HAMILTON BEACH",
+      precio: "$100.000",
+      descripcion: 'Referencia:142',
+      imagenes: ["img/Lavanderia/142_Plancha_Hamilton_Beach.JPG", "img/Lavanderia/142.2_Plancha_Hamilton_Beach.JPG"],
+      mensaje: "Hola, me interesa la Plancha HAMILTON BEACH",
+      vendido: false
+    },
+    {
+      nombre: "Mueble organizador RIMAX cuatro niveles",
+      precio: "$250.000",
+      descripcion: 'Referencia:143',
+      imagenes: ["img/Lavanderia/143_Mueble_organizador_rimax_cuatro_niveles.JPG"],
+      mensaje: "Hola, me interesa el Mueble organizador RIMAX cuatro niveles",
+      vendido: false
+    },
+    {
+      nombre: "Dos cajas azules con tapa blanca de plástico",
+      precio: "$50.000",
+      descripcion: 'Referencia:146',
+      imagenes: ["img/Lavanderia/146_Dos_cajas_azules_tapa_blanca.JPG"],
+      mensaje: "Hola, me interesa las Dos cajas azules con tapa blanca de plástico",
+      vendido: false
+    },
+    {
+      nombre: "Escalera blanca-negra metálica de dos peldaños",
+      precio: "$90.000",
+      descripcion: 'Referencia:147',
+      imagenes: ["img/Lavanderia/147_Escalera_blanca-negra_metalica.JPG", "img/Lavanderia/147.1_Escalera_blanca-negra_metalica.JPG"],
+      mensaje: "Hola, me interesa la Escalera blanca-negra metálica de dos peldaños",
+      vendido: false
+    },
+    {
+      nombre: "Organizador blanco metálico con chupas",
+      precio: "$30.000",
+      descripcion: 'Referencia:151',
+      imagenes: ["img/Lavanderia/151_Organizador_blanco_con_chupas.JPG"],
+      mensaje: "Hola, me interesa el Organizador blanco metalico con chupas",
+      vendido: false
+    },
+    {
+      nombre: "Bandeja de madera grande con asas metálicas",
+      precio: "$50.000",
+      descripcion: 'Referencia:153',
+      imagenes: ["img/Lavanderia/153_Bandeja_madera_asas_metalicas.JPG"],
+      mensaje: "Hola, me interesa la Bandeja de madera grande con asas metálicas",
+      vendido: false
+    },
+  ],
+  Oficina: [
+    {
+      nombre: "Escritorio en L, medidas: 190cm x 51cm con patas",
+      precio: "$350.000",
+      descripcion: 'Referencia: 015',
+      imagenes: ["img/Oficina/015_Escritorio_L_190_x_51_cm.JPG","img/Oficina/015.2_Escritorio_L_190_x_51_cm.JPG"],
+      mensaje: "Hola, me interesa el Escritorio en L, medidas: 190cm x 51cm con patas",
+      vendido: false
+    },
+    {
+      nombre: "Escritorio medidas: 200cm x 51cm con patas",
+      precio: "$300.000",
+      descripcion: 'Referencia: 016',
+      imagenes: ["img/Oficina/016_Escritorio_200_x_51_cm.JPG", "img/Oficina/016.2_Escritorio_200_x_51_cm.JPG",
+        "img/Oficina/016.3_Escritorio_200_x_51_cm.JPG"
+      ],
+      mensaje: "Hola, me interesa el EEscritorio medidas: 200cm x 51cm con patas",
+      vendido: false
+    },
+    {
+      nombre: "Archivadpr de madera, medidas: 120cm x 45cm x 75cm",
+      precio: "$250.000",
+      descripcion: 'Referencia: 017',
+      imagenes: ["img/Oficina/017_Archivador_madera_120_x_45_cm.JPG", "img/Oficina/017.2_Archivador_madera_120_x_45_cm.JPG",
+        "img/Oficina/016.3_Escritorio_200_x_51_cm.JPG"
+      ],
+      mensaje: "Hola, me interesa el Archivadpr de madera",
+      vendido: false
+    },
+    {
+      nombre: "Tablero inoxidable BLOMUS, medidas 60cm x 50cm",
+      precio: "$80.000",
+      descripcion: 'Referencia: 018',
+      imagenes: ["img/Oficina/018_Tablero_Blomus_Inoxidable_60x50_cm.JPG"],
+      mensaje: "Hola, me interesa el Tablero inoxidable BLOMUS 60 x 50",
+      vendido: false
+    },
+    {
+      nombre: "Tablero inoxidable BLOMUS, medidas 90cm x 80cm",
+      precio: "$90.000",
+      descripcion: 'Referencia: 019',
+      imagenes: ["img/Oficina/019_Tablero_Blomus_Inoxdb_120x45_cm.JPG"],
+      mensaje: "Hola, me interesa el Tablero inoxidable BLOMUS, medidas 90cm x 80cm",
+      vendido: false
+    },
+    {
+      nombre: "Dos repisas de pino medidas 110cm x 25cm",
+      precio: "$240.000",
+      descripcion: 'Referencia: 020',
+      imagenes: ["img/Oficina/020_Dos_Repisas_Pino_110_x_25_cm.JPG"],
+      mensaje: "Hola, me interesa las Dos repisas de pina medidas 110cm x 25cm",
+      vendido: false
+    },
+    {
+      nombre: "Repisa de pino medidas 100cm x 25cm",
+      precio: "$120.000",
+      descripcion: 'Referencia: 022',
+      imagenes: ["img/Oficina/022_Repisa_Pino_100_x_25_cm.JPG", "img/Oficina/022.1_Repisa_Pino_100_x_25_cm.JPG"],
+      mensaje: "Hola, me interesa la Repisa de pino medidas 100cm x 25cm",
+      vendido: false
+    },
+    {
+      nombre: "Cajonera de ocho cajones, organizador para herramientas con herramientas incluídas",
+      precio: "$350.000",
+      descripcion: 'Referencia: 025',
+      imagenes: ["img/Oficina/025_Cajonera_organizador_herramientas.JPG"],
+      mensaje: "Hola, me interesa la Cajonera de ocho cajones, organizador para herramientas con herramientas incluídas",
+      vendido: false
+    },
+    {
+      nombre: "Laptop HP ENVY X360, 13.3pulgadas Windows 10",
+      precio: "$350.000",
+      descripcion: 'Referencia: 029',
+      imagenes: ["img/Oficina/029_Laptop_HP_ENVY_x360_13.3__Windows_10.JPG"],
+      mensaje: "Hola, me interesa la Laptop HP ENVY X360, 13.3pulgadas Windows 10",
+      vendido: false
+    },
+    {
+      nombre: "Laptop HP ENVY X360, 13.3pulgadas Windows 10 en aluminio",
+      precio: "$1.900.000",
+      descripcion: 'Referencia: 029',
+      imagenes: ["img/Oficina/029_Laptop_HP_ENVY_x360_13.3__Windows_10.JPG", "img/Oficina/029.2_Laptop_HP_ENVY_x360_13.3__Windows_10.JPG",
+        "img/Oficina/029.3_Laptop_HP_ENVY_x360_13.3__Windows_10.JPG"
+      ],
+      mensaje: "Hola, me interesa la Laptop HP ENVY X360, 13.3pulgadas Windows 10",
+      vendido: false
+    },
+    {
+      nombre: "Unidad de Backup READYNAS NV+ 4Slots",
+      precio: "$300.000",
+      descripcion: 'Referencia: 031',
+      imagenes: ["img/Oficina/031_Unidad_Backup_Readynas_NV+.JPG"],
+      mensaje: "Hola, me interesa la Unidad de Backup READYNAS NV+ 4Slots",
+      vendido: false
+    },
+    {
+      nombre: "Kit de escritorio",
+      precio: "$50.000",
+      descripcion: 'Referencia: 032',
+      imagenes: ["img/Oficina/032_Kit_escritorio_Negro.JPG"],
+      mensaje: "Hola, me interesa el Kit de escritorio",
+      vendido: false
+    },
+    {
+      nombre: "Apuntador Power Point control remoto, DINO FIRE",
+      precio: "$40.000",
+      descripcion: 'Referencia: 046',
+      imagenes: ["img/Oficina/046_Apuntador_PowerPoint_control_remoto.JPG"],
+      mensaje: "Hola, me interesa Apuntador Power Point control remoto",
+      vendido: false
+    },
+    {
+      nombre: "Once organizadores de canasta de plástico",
+      precio: "$220.000",
+      descripcion: 'Referencia: 306',
+      imagenes: ["img/Oficina/306_Once_organizadores_canasta.JPG"],
+      mensaje: "Hola, me interesa los Once organizadores de canasta de plástico",
+      vendido: false
+    },
+    {
+      nombre: "Estructura para escritorio, WALI, para sostener monitores y otros artefactos",
+      precio: "$300.000",
+      descripcion: 'Referencia: 374',
+      imagenes: ["img/Oficina/374_Estructura_Wali_para_escritorio_monitores_otros.JPG"],
+      mensaje: "Hola, me interesa la Estructura para escritorio, WALI",
+      vendido: false
+    },
+    {
+      nombre: "Kit de iluminación FOVITEC clásica de una luz",
+      precio: "$250.000",
+      descripcion: 'Referencia: 376',
+      imagenes: ["img/Oficina/376_Kit_iluminacion_Fovitec.jpg", "img/Oficina/376.1_Kit_iluminacion_Fovitec.jpg"],
+      mensaje: "Hola, me interesa el Kit de iluminación FOVITEC clásica de una luz",
+      vendido: false
+    },
+    {
+      nombre: "DVD PLAYER SONY, Modelo: DVP-SR210P (NUEVO)",
+      precio: "$100.000",
+      descripcion: 'Referencia: 378',
+      imagenes: ["img/Oficina/378_DVD_player_SONY_DVP-SR210P.JPG"],
+      mensaje: "Hola, me interesa el DVD PLAYER SONY, Modelo: DVP-SR210P",
+      vendido: false
+    },
+    {
+      nombre: "Microfono SHURE, modelo SM58",
+      precio: "$200.000",
+      descripcion: 'Referencia: 379',
+      imagenes: ["img/Oficina/379_Microfono_SHure_SM58.JPG"],
+      mensaje: "Hola, me interesa el Microfono SHURE",
+      vendido: false
+    },
+    {
+      nombre: "Dos sillas para escritorio negras con patas metálicas y ruedas",
+      precio: "$400.000",
+      descripcion: 'Referencia: 380',
+      imagenes: ["img/Oficina/380_Dos_Sillas_escritorio_negras_patas_metalicas.JPG"],
+      mensaje: "Hola, me interesa las Dos sillas para escritorio negras con patas metálicas y ruedas",
+      vendido: false
+    },
+  ],
+  Sala: [
+    {
+      nombre: "Jarrón de barro verde",
+      precio: "$80.000",
+      descripcion: 'Referencia: 044',
+      imagenes: ["img/Sala/044_Jarron_Barro_Verde.JPG"],
+      mensaje: "Hola, me interesa el Jarrón de barro verde",
+      vendido: false
+    },
+    {
+      nombre: "Cajita de madera porta joyero",
+      precio: "$30.000",
+      descripcion: 'Referencia: 096',
+      imagenes: ["img/Sala/096_Cajita_madera_Porta_joyero.JPG"],
+      mensaje: "Hola, me interesa la Cajita de madera porta joyero",
+      vendido: false
+    },
+    {
+      nombre: "Sofa amarillo de tres puestos, madera",
+      precio: "$800.000",
+      descripcion: 'Referencia: 105',
+      imagenes: ["img/Sala/105_Sofa_amarillo_tres_puestos.JPG"],
+      mensaje: "Hola, me interesa el Sofa amarillo de tres puestos, madera",
+      vendido: false
+    },
+    {
+      nombre: "Sofa terracota de dos puestos",
+      precio: "$600.000",
+      descripcion: 'Referencia: 106',
+      imagenes: ["img/Sala/106_Sofa_terracota_dos_puestos.JPG"],
+      mensaje: "Hola, me interesa el Sofa terracota de dos puestos",
+      vendido: false
+    },
+    {
+      nombre: "Tres pinturas de muñecas acrílico sobre madera",
+      precio: "$330.000",
+      descripcion: 'Referencia: 109',
+      imagenes: ["img/Sala/109_Tres_pinturas_munecas_acrilico.JPG"],
+      mensaje: "Hola, me interesa las Tres pinturas de muñecas acrílico sobre madera",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro butacos para barra italianos de madera, de diseñador Lyra",
+      precio: "$600.000",
+      descripcion: 'Referencia: 111',
+      imagenes: ["img/Sala/111_Cuatro_Butacos_barra_Italianos_diseñador.JPG", "img/Sala/111.3_Cuatro_Butacos_barra_Italianos_diseñador.JPG",
+        "img/Sala/111.3_Cuatro_Butacos_barra_Italianos_diseñador.JPG", "img/Sala/111.4_Cuatro_Butacos_barra_Italianos_diseñador.JPG"
+      ],
+      mensaje: "Hola, me interesa los Cuatro butacos para barra italianos de madera",
+      vendido: false
+    },
+    {
+      nombre: "Lampara de hierro con vitrales",
+      precio: "$150.000",
+      descripcion: 'Referencia: 115',
+      imagenes: ["img/Sala/115_Lampara_hierro_vitrales.JPG", "img/Sala/115.2_Lampara_hierro_vitrales.JPG"],
+      mensaje: "Hola, me interesa la Lampara de hierro con vitrales",
+      vendido: false
+    },
+    {
+      nombre: "Dos jarones de vidrio verdes",
+      precio: "$120.000",
+      descripcion: 'Referencia: 116',
+      imagenes: ["img/Sala/116_Jarrones_verdes_de_vidrio.JPG"],
+      mensaje: "Hola, me interesa los Dos jarones de vidrio verdes",
+      vendido: false
+    },
+    {
+      nombre: "Jarrón de barro azul",
+      precio: "$180.000",
+      descripcion: 'Referencia: 133',
+      imagenes: ["img/Sala/133_Jarron_barro_azul.JPG", "img/Sala/133.2_Jarron_barro_azul.JPG"],
+      mensaje: "Hola, me interesa el Jarrón de barro azul",
+      vendido: false
+    },
+    {
+      nombre: "Cuadro de Sombrero, machete poncho y carriel de R. Lopez, medidas: 123cm x 73 cm",
+      precio: "$180.000",
+      descripcion: 'Referencia: 134',
+      imagenes: ["img/Sala/134_Cuadro_Sombrero_Machete_R._Lopez.JPG"],
+      mensaje: "Hola, me interesa el Cuadro de Sombrero, machete poncho y carriel de R. Lopez, medidas: 123cm x 73 cm",
+      vendido: false
+    },
+    {
+      nombre: "Arbol de la vida en hierro forjado",
+      precio: "$400.000",
+      descripcion: 'Referencia: 381',
+      imagenes: ["img/Sala/381_Arbol_de_Vida_hierro_forjado.jpg"],
+      mensaje: "Hola, me interesa el Arbol de la vida en hierro forjado",
+      vendido: false
+    },
+    {
+      nombre: "Pareja en hierro forjado",
+      precio: "$200.000",
+      descripcion: 'Referencia: 382',
+      imagenes: ["img/Sala/382_Pareja_en_hierro_forjado.jpg"],
+      mensaje: "Hola, me interesa la Pareja en hierro forjado",
+      vendido: false
+    },
+  ] 
+};
+
+function showCategory(id, btn) {
+  document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+let currentImages = [];
+let currentIndex = 0;
+
+function openModal(images, index) {
+  currentImages = images;
+  currentIndex = index;
+  document.getElementById("modal-img").src = images[index];
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+function nextImage() {
+  currentIndex = (currentIndex + 1) % currentImages.length;
+  document.getElementById("modal-img").src = currentImages[currentIndex];
+}
+
+function prevImage() {
+  currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+  document.getElementById("modal-img").src = currentImages[currentIndex];
+}
+
+for (const cat in productos) {
+  const cont = document.getElementById(`productos-${cat}`);
+  productos[cat].forEach(p => {
+
+    const estaVendido = p.vendido === true;
+
+    cont.innerHTML += `
+      <div class="product ${estaVendido ? 'vendido' : ''}">
+        ${estaVendido ? '<div class="vendido-badge">VENDIDO</div>' : ''}
+        <img src="${p.imagenes[0]}" onclick='openModal(${JSON.stringify(p.imagenes)},0)'>
+        <h3>${p.nombre}</h3>
+        <p class="price">${p.precio}</p>
+        <p>${p.descripcion}</p>
+        ${
+          estaVendido
+          ? `<a style="background: gray; pointer-events: none;">Vendido</a>`
+          : `<a href="https://wa.me/${telefono}?text=${encodeURIComponent(p.mensaje)}">
+              Preguntar por WhatsApp
+            </a>`
+        }
+      </div>
+    `;
+  });
+}
+</script>
+
+</body>
+</html>
