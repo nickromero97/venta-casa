@@ -142,9 +142,12 @@ header a {
 }
 
 .modal img {
-  max-width: 90%;
-  max-height: 80%;
+  max-width: 90vw;
+  max-height: 90vh;
   border-radius: 8px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 .modal button {
@@ -266,7 +269,7 @@ const productos = {
       nombre: "Bandeja pequeña de cerámica verde",
       precio: "$15.000",
       descripcion: "Referencia:354",
-      imagenes: ["img/Bano/354_Bandeja_pequeña_ceramica_verde.JPG"],
+      imagenes: ["img/Bano/354_Bandeja_pequeña_ceramica_verde.JPG"],
       mensaje: "Hola, me interesa la Bandeja pequeña de cerámica verde",
       vendido: false
     },
@@ -476,7 +479,7 @@ const productos = {
       nombre: "Dos tazas de cerámica con vertsículos bíblicos",
       precio: "$60.000",
       descripcion: "Referencia: 197",
-      imagenes: ["img/Cocina/197_Tazas_ceramica_blanca_versículos.JPG"],
+      imagenes: ["img/Cocina/197_Tazas_ceramica_blanca_versículos.jpg"],
       mensaje: "Hola, me interesa las Dos tazas de cerámica con vertsículos bíblicos",
       vendido: false
     },
@@ -492,7 +495,7 @@ const productos = {
       nombre: "Juego de cuatro recipientes para granos de cerámica",
       precio: "$180.000",
       descripcion: "Referencia: 199",
-      imagenes: ["img/Cocina/199_Juego_4_recipientes_granos_cerámica.JPG"],
+      imagenes: ["img/Cocina/199_Juego_4_recipientes_granos_cerámica.jpg"],
       mensaje: "Hola, me interesa el Juego de cuatro recipientes para granos de cerámica",
       vendido: false
     },
@@ -540,7 +543,7 @@ const productos = {
       nombre: "Dos escurridores cilíndricos de acero inoxidable pequeño",
       precio: "$120.000",
       descripcion: "Referencia: 207",
-      imagenes: ["img/Cocina/207_Dos_escurridores_cilindricos_inox_pequeños.JPG"],
+      imagenes: ["img/Cocina/207_Dos_escurridores_cilindricos_inox_pequeños.jpg"],
       mensaje: "Hola, me interesa los Dos escurridores cilindricos de ácero inoxidable pequeño",
       vendido: false
     },
@@ -1103,14 +1106,6 @@ const productos = {
       vendido: false
     },
     {
-      nombre: "Cuatro repisas en pino con soportes de aluminio, medidas 100cm x 25cm",
-      precio: "$480.000",
-      descripcion: "Referencia: 060",
-      imagenes: ["img/Estar TV/060_Cuatro_Repisas_Pino_100cm_x_25_cm.JPG"],
-      mensaje: "Hola, me interesa las Cuatro repisas en pino con soportes de aluminio, medidas 100cm x 25cm",
-      vendido: false
-    },
-    {
       nombre: "Tres velones",
       precio: "$50.000",
       descripcion: "Referencia: 062",
@@ -1160,14 +1155,6 @@ const productos = {
       mensaje: "Hola, me interesa el Colchon inflable individual KLIMBER",
       vendido: false
     },
-    {
-      nombre: "Lampara para lectura con 6 intensidades de luz y 3 colores, GLOCUSENT",
-      precio: "$100.000",
-      descripcion: 'Referencia:373',
-      imagenes: ["img/Habitación/373_Lampara_Glocusent_lectura.JPG", "img/Habitación/373.2_Lampara_Glocusent_lectura.JPG"],
-      mensaje: "Hola, me interesa la Lampara para lectura con 6 intensidades de luz y 3 colores, GLOCUSENT",
-      vendido: false
-    }
   ],
   Lavanderia: [
     {
@@ -1296,14 +1283,6 @@ const productos = {
       descripcion: 'Referencia: 022',
       imagenes: ["img/Oficina/022_Repisa_Pino_100_x_25_cm.JPG", "img/Oficina/022.1_Repisa_Pino_100_x_25_cm.JPG"],
       mensaje: "Hola, me interesa la Repisa de pino medidas 100cm x 25cm",
-      vendido: false
-    },
-    {
-      nombre: "Cajonera de ocho cajones, organizador para herramientas con herramientas incluídas",
-      precio: "$350.000",
-      descripcion: 'Referencia: 025',
-      imagenes: ["img/Oficina/025_Cajonera_organizador_herramientas.JPG"],
-      mensaje: "Hola, me interesa la Cajonera de ocho cajones, organizador para herramientas con herramientas incluídas",
       vendido: false
     },
     {
@@ -1526,6 +1505,12 @@ function updateCounter() {
   counter.textContent = `${currentIndex + 1}/${currentImages.length}`;
 }
 
+function updateModal() {
+  document.getElementById("modal-img").src = currentImages[currentIndex];
+  document.getElementById("contador").innerText = 
+    (currentIndex + 1) + "/" + currentImages.length;
+}
+
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
@@ -1561,6 +1546,45 @@ function handleSwipe() {
   }
 
 }
+let img = [];
+let index = 0;
+
+function openModal(images, index = 0) {
+  currentImages = images;
+  currentIndex = index;
+  document.getElementById("modal").style.display = "flex";
+  updateModal();
+}
+
+function updateModal() {
+  const img = document.getElementById("modal-img");
+  const counter = document.getElementById("image-counter");
+
+  img.src = currentImages[currentIndex];
+  counter.innerText = (currentIndex + 1) + "/" + currentImages.length;
+}
+
+function nextImage() {
+  if (currentIndex < currentImages.length - 1) {
+    currentIndex++;
+  } else {
+    currentIndex = 0;
+  }
+  updateModal();
+}
+
+function prevImage() {
+  if (currentIndex > 0) {
+    currentIndex--;
+  } else {
+    currentIndex = currentImages.length - 1;
+  }
+  updateModal();
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
 
 for (const cat in productos) {
   const cont = document.getElementById(`productos-${cat}`);
@@ -1578,7 +1602,9 @@ for (const cat in productos) {
         ${
           estaVendido
           ? `<a style="background: gray; pointer-events: none;">Vendido</a>`
-          : `<a href="https://wa.me/${telefono}?text=${encodeURIComponent(p.mensaje)}">
+          : `<a <a href="https://wa.me/${telefono}?text=${encodeURIComponent(
+  p.mensaje + ". " + p.descripcion
+)}">
               Preguntar por WhatsApp
             </a>`
         }
