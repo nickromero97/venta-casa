@@ -190,6 +190,8 @@ header a {
   <button onclick="showCategory('Lavanderia', this)">Lavandería</button>
   <button onclick="showCategory('Oficina', this)">Oficina</button>
   <button onclick="showCategory('Sala', this)">Sala</button>
+  <button onclick="showCategory('Navidad', this)">Navidad</button>
+  <button onclick="showCategory('Camping', this)">Camping</button>
 </div>
 
 <!-- CATEGORIES -->
@@ -225,6 +227,13 @@ header a {
   <div class="products" id="productos-Sala"></div>
 </div>
 
+<div class="category" id="Navidad">
+  <div class="products" id="productos-Navidad"></div>
+</div>
+
+<div class="category" id="Camping">
+  <div class="products" id="productos-Camping"></div>
+</div>
 </div>
 
 <!-- MODAL -->
@@ -1298,6 +1307,300 @@ const productos = {
       mensaje: "Hola, me interesa la Mesa de centro de sala y dos mesas auxiliares en madera fina",
       vendido: false
     },
+  ]
+  Navidad: [
+    {
+      nombre: "8 Cajas de bolas y adornos Glam para árbol",
+      precio: "$12.500 c/u",
+      descripcion: "Referencia: 399",
+      imagenes: ["img/Navidad/8 Cajas de bolas y adornos Glam para árbol.jpeg"],
+      mensaje: "Hola, me interesa 8 Cajas de bolas y adornos Glam para árbol",
+      vendido: false
+    },
+    {
+      nombre: "2 Cajas de 18 bolitas cada una doradas y rojas para árbol",
+      precio: "$10.000 c/u",
+      descripcion: "Referencia:398",
+      imagenes: ["img/Navidad/2 Cajas de 18 bolitas cada una doradas y rojas para árbol.jpeg"],
+      mensaje: "Hola, me interesa 2 Cajas de 18 bolitas cada una doradas y rojas para árbol",
+      vendido: false
+    },
+    {
+      nombre: "Una Instalación de 200 led para arbol Burica para Navidad",
+      precio: "$25.000",
+      descripcion: "Referencia:397",
+      imagenes: ["img/Navidad/Una Instalación de 200 led para arbol Burica para Navidad.jpeg"],
+      mensaje: "Hola, me interesa Una Instalación de 200 led para arbol Burica para Navidad",
+      vendido: false
+    },
+    {
+      nombre: "Una Estrella para copa de arbol de Navidad HomeSentry",
+      precio: "$10.000",
+      descripcion: "Referencia:395",
+      imagenes: ["img/Navidad/Una  Estrella para copa de arbol de Navidad HomeSentry.jpeg"],
+      mensaje: "Hola, me interesa Una Estrella para copa de arbol de Navidad HomeSentry",
+      vendido: false
+    },
+    {
+      nombre: " Una Extensión de 3 mtrs",
+      precio: "$15.000",
+      descripcion: "Referencia:394",
+      imagenes: ["img/Navidad/Una  xtensión de  3 mtrs.jpeg"],
+      mensaje: "Hola, me interesa Una Extensión de 3 mtrs",
+      vendido: false
+    },
+    {
+      nombre: "2  Cajas de seis bolas vintage cada caja navideñas",
+      precio: "$35.000 c/u",
+      descripcion: "Referencia:392",
+      imagenes: ["img/Navidad/2  Cajas de seis bolas vintage cada caja navideñas.jpeg"],
+      mensaje: "Hola, me interesa  2  Cajas de seis bolas vintage cada caja navideñas",
+      vendido: false
+    },
+    {
+      nombre: "Un Camino calado con motivos de navidad de fieltro para mesa",
+      precio: "$20.000",
+      descripcion: "Referencia:393",
+      imagenes: ["img/Navidad/Un Camino calado con motivos de navidad de fieltro para mesa.jpeg"],
+      mensaje: "Hola, me interesa Un Camino calado con motivos de navidad de fieltro para mesa",
+      vendido: false
+    },
+    {
+      nombre: "3 Cajas de cuatro bolas cada una Ambiente Living para árbol",
+      precio: "$20.000 c/u",
+      descripcion: "Referencia:391",
+      imagenes: ["img/Navidad/3 Cajas de cuatro bolas cada una Ambiente Living para árbo.jpeg"],
+      mensaje: "Hola, me interesa 3 Cajas de cuatro bolas cada una Ambiente Living para árbol",
+      vendido: false
+    },
+    {
+      nombre: "3 Frasco con luces Navideños",
+      precio: "$20.000",
+      descripcion: "Referencia:390",
+      imagenes: ["img/Navidad/3 Frasco con luces Navideños.jpeg"],
+      mensaje: "Hola, me interesa 3 Frasco con luces Navideños",
+      vendido: false
+    },
+    {
+      nombre: "5 Articulos varios de Navidad",
+      precio: "$50.000",
+      descripcion: "Referencia:389",
+      imagenes: ["img/Navidad/5 Articulos varios de Navidad.jpeg"],
+      mensaje: "Hola, me interesa 5 Articulos varios de Navidad",
+      vendido: false
+    },
+    {
+      nombre: "2 Cajas de lucecitas led",
+      precio: "$20.000",
+      descripcion: "Referencia:388",
+      imagenes: ["img/Navidad/2 Cajas de lucecitas led.jpeg"],
+      mensaje: "Hola, me interesa 2 Cajas de lucecitas led",
+      vendido: false
+    },
+    {
+      nombre: "2 Cajas de leds interior y exterior precio",
+      precio: "$30.000 c/u",
+      descripcion: "Referencia:387",
+      imagenes: ["img/Navidad/2 Cajas de leds interior y exterior precio.jpeg"],
+      mensaje: "Hola, me interesa 2 Cajas de leds interior y exterior precio",
+      vendido: false
+    },
+    {
+      nombre: "4 Vijines Navidad",
+      precio: "$10.000 c/u",
+      descripcion: "Referencia:386",
+      imagenes: ["img/Navidad/4 Vijines Navidad.jpeg"],
+      mensaje: "Hola, me interesa  4 Vijines Navidad",
+      vendido: false
+    },
+    {
+      nombre: "Una Guirnalda de Navidad",
+      precio: "$15.000",
+      descripcion: "Referencia:385",
+      imagenes: ["img/Navidad/Una Guirnalda de Navidad.jpeg"],
+      mensaje: "Hola, me interesa Una Guirnalda de Navidad",
+      vendido: false
+    },
+  ] 
+  Camping: [
+    {
+      nombre: "Mesa de aluminio para Camping 70x70",
+      precio: "$120.000",
+      descripcion: "Referencia: 421",
+      imagenes: ["img/Camping/Mesa de Camping.jpeg"],
+      mensaje: "Hola, me interesa la Mesa de aluminio para Camping 70x70",
+      vendido: false
+    },
+    {
+      nombre: "Tripode compacto BOSCH Modelo BT150",
+      precio: "$140.000",
+      descripcion: "Referencia:420",
+      imagenes: ["img/Camping/Tripode Compacto.jpeg"],
+      mensaje: "Hola, me interesa el Tripode compacto BOSCH Modelo BT150",
+      vendido: false
+    },
+    {
+      nombre: "Equipo de snorkel para dos adultos y un nuño y zapatillas de Camping para dama de buceo",
+      precio: "$200.000",
+      descripcion: "Referencia:419",
+      imagenes: ["img/Camping/Equipo de Snorkel 1.jpeg", "img/Camping/Equipo de Snorkel 2.jpeg",
+        "img/Camping/Equipo de Snorkel 3.jpeg", "img/Camping/Equipo de Snorkel 4.jpeg", "img/Camping/Equipo de Snorkel 5.jpeg"
+        "img/Camping/Equipo de Snorkel 6.jpeg", "img/Camping/Zapatillas de camping para dama.jpeg"
+      ],
+      mensaje: "Hola, me interesa el Equipo de snorkel para dos adultos y un nuño y zapatillas de Camping para dama de buceo",
+      vendido: false
+    },
+    {
+      nombre: "Una Hamaca ultrliviana de viajero AMAZONAS Carga hasta 250 libras",
+      precio: "$70.000",
+      descripcion: "Referencia:418",
+      imagenes: ["img/Camping/Una Hama ultraliviana 1.jpeg", "img/Camping/Una Hama ultraliviana.jpeg"],
+      mensaje: "Hola, me interesa Una Hamaca ultrliviana de viajero AMAZONAS Carga hasta 250 libras",
+      vendido: false
+    },
+    {
+      nombre: "Estera para playa",
+      precio: "$15.000",
+      descripcion: "Referencia:417",
+      imagenes: ["img/Camping/Estera para playa.jpeg"],
+      mensaje: "Hola, me interesa la Estera para playa",
+      vendido: false
+    },
+    {
+      nombre: "Cinco Almohadas para acampar",
+      precio: "$50.000",
+      descripcion: "Referencia:416",
+      imagenes: ["img/Camping/Cinco Almohadas para acampar.jpeg"],
+      mensaje: "Hola, me interesa las Cinco Almohadas para acampar",
+      vendido: false
+    },
+    {
+      nombre: "Dos Sleeping bags, marca Kelty",
+      precio: "$150.000",
+      descripcion: "Referencia:415",
+      imagenes: ["img/Camping/Dos sleeping bags.jpeg"],
+      mensaje: "Hola, me interesa los Dos Sleeping bags",
+      vendido: false
+    },
+    {
+      nombre: "Tres colchonetas inflables Therm A Rest individuales",
+      precio: "$100.000",
+      descripcion: "Referencia:414",
+      imagenes: ["img/Camping/Tres Colchonetas inflables Therm a rest individuales.jpeg"],
+      mensaje: "Hola, me interesa las Tres colchonetas inflables Therm A Rest individuales",
+      vendido: false
+    },
+    {
+      nombre: "Dos fundas impermeables para Walkie-Talkies",
+      precio: "$20.000",
+      descripcion: "Referencia:412",
+      imagenes: ["img/Camping/Dos fundas impermeables para Walkie-Talkies.jpeg"],
+      mensaje: "Hola, me interesa las Dos fundas impermeables para Walkie-Talkies",
+      vendido: false
+    },
+    {
+      nombre: "Cuatro sabanas individuales para Camping",
+      precio: "$80.000",
+      descripcion: "Referencia:413",
+      imagenes: ["img/Camping/Cuatro Sabanas individuales.jpeg"],
+      mensaje: "Hola, me interesa las Cuatro sabanas individuales para Camping",
+      vendido: false
+    },  
+    {
+      nombre: "Juego de 10 estacas para carpas diferentes tipos de suelos",
+      precio: "$30.000",
+      descripcion: "Referencia:411",
+      imagenes: ["img/Camping/Ref. 411  Juego de 10 estacas para carpas diferentes tipos de suelos.jpeg"],
+      mensaje: "Hola, me interesa los Juego de 10 estacas para carpas diferentes tipos de suelos",
+      vendido: false
+    }, 
+    {
+      nombre: "Una  Bolsa impermeable Seal line SEE 5HD de alta resistencia",
+      precio: "$30.000",
+      descripcion: "Referencia:410",
+      imagenes: ["img/Camping/Una  Bolsa impermeable Seal line SEE 5HD de alta resistencia 1.jpeg",
+       "img/Camping/Una  Bolsa impermeable Seal line SEE 5HD de alta resistencia 2.jpeg"],
+      mensaje: "Hola, me interesa Una  Bolsa impermeable Seal line SEE 5HD de alta resistencia",
+      vendido: false
+    }, 
+    {
+      nombre: "Dos bolsas plásticas para almacenar agua precio",
+      precio: "$30.000",
+      descripcion: "Referencia:409",
+      imagenes: ["img/Camping/Dos bolsas plásticas para almacenar agua precio.jpeg"],
+      mensaje: "Hola, me interesa Dos bolsas plásticas para almacenar agua precio",
+      vendido: false
+    }, 
+    {
+      nombre: "Un Juego de cubiertos para camping",
+      precio: "$10.000",
+      descripcion: "Referencia:408",
+      imagenes: ["img/Camping/Un Juego de cubiertos para camping.jpeg",
+        "img/Camping/Un Juego de cubiertos para camping.1.jpeg"
+      ],
+      mensaje: "Hola, me interesa Un Juego de cubiertos para camping",
+      vendido: false
+    }, 
+    {
+      nombre: "Una Estufa de un fogon de propano para gas sin bombona no necesita fósforos",
+      precio: "$50.000",
+      descripcion: "Referencia:407",
+      imagenes: ["img/Camping/Una Estufa de un fogon de propano para gas sin bombona no necesita fósforos 1.jpeg",
+        "img/Camping/Una Estufa de un fogon de propano para gas sin bombona no necesita fósforos 2.jpeg"
+      ],
+      mensaje: "Hola, me interesa  Una Estufa de un fogon de propano para gas sin bombona no necesita fósforos",
+      vendido: false
+    }, 
+    {
+      nombre: "Un Porta condimentos (8 capsulas)",
+      precio: "$10.000",
+      descripcion: "Referencia:406",
+      imagenes: ["img/Camping/Un Porta condimentos (8 capsulas).jpeg"],
+      mensaje: "Hola, me interesa Un Porta condimentos (8 capsulas)",
+      vendido: false
+    }, 
+    {
+      nombre: "Un Colador con manija",
+      precio: "$10.000",
+      descripcion: "Referencia:404",
+      imagenes: ["img/Camping/Un Colador con manija 1.jpeg", "img/Camping/Un Colador con manija 2.jpeg",
+        "img/Camping/Un Colador con manija 3.jpeg"
+      ],
+      mensaje: "Hola, me interesa Un Colador con manija",
+      vendido: false
+    },
+    {
+      nombre: "Camping Parrilla Pliant plegable de mano",
+      precio: "$30.000",
+      descripcion: "Referencia:403",
+      imagenes: ["img/Camping/Camping Parrilla Pliant plegable de mano.jpeg", "img/Camping/Camping Parrilla Pliant plegable de mano1.jpeg",
+        "img/Camping/Un Colador con manija 3.jpeg"
+      ],
+      mensaje: "Hola, me interesa Un Camping Parrilla Pliant plegable de mano",
+      vendido: false
+    }, 
+    {
+      nombre: "Un juego de 7 ollas y sartenes para camping con agarraderas independientes ",
+      precio: "$35.000",
+      descripcion: "Referencia:402",
+      imagenes: ["img/Camping/Un juego de 7 ollas y sartenes para camping con agarraderas independientes 3.jpeg",
+       "img/Camping/Un juego de 7 ollas y sartenes para camping con agarraderas independientes 1.jpeg",
+       "img/Camping/Un juego de 7 ollas y sartenes para camping con agarraderas independientes 2.jpeg"
+      ],
+      mensaje: "Hola, me interesa Un juego de 7 ollas y sartenes para camping con agarraderas independientes ",
+      vendido: false
+    }, 
+    {
+      nombre: "Un Colador con manija",
+      precio: "$10.000",
+      descripcion: "Referencia:404",
+      imagenes: ["img/Camping/Un Colador con manija 1.jpeg", "img/Camping/Un Colador con manija 2.jpeg",
+        "img/Camping/Un Colador con manija 3.jpeg"
+      ],
+      mensaje: "Hola, me interesa Un Colador con manija",
+      vendido: false
+    }, 
+    
   ] 
 };
 
